@@ -5,9 +5,9 @@ import os
 
 
 class VoiceAssistant:
-    def __init__(self, name='jarvis'):
+    def __init__(self, name='jarvis', startupQuote='At your service, sir'):
         self.name = name
-        self.say('At your service, sir')
+        self.say(startupQuote)
 
     def listen(self):
         r = sr.Recognizer()
@@ -38,27 +38,20 @@ class VoiceAssistant:
         # Delete audio file
         os.remove('.said.mp3')
 
-    def parseInstructions(self, instructions):
-        # If the assistant hasn't been summoned, don't do anything
-        if self.name not in instructions:
-            return ''
-        # Otherwise, do everything said after the assistant's name
-        return instructions[instructions.index(self.name) + len(self.name):].strip()
-
     def act(self, instructions):
-        # Clean up instructions before executing
-        instructions = self.parseInstructions(instructions)
-        print('Instructions: ' + instructions)
-
-        # Execute instructions
-        if 'what is your name' in instructions or "what's your name" in instructions:
-            self.say('My name is ' + self.name)
-        elif 'lock' in instructions:
-            self.say('As you wish, sir')
-            os.system('xscreensaver-command -lock')
+        # Make sure the assistant has been summoned:
+        if self.name in instructions:
+            # Execute instructions
+            if 'what is your name' in instructions or "what's your name" in instructions:
+                self.say('My name is ' + self.name)
+            elif 'lock' in instructions:
+                self.say('As you wish, sir')
+                os.system('xscreensaver-command -lock')
+            elif 'hello' in instructions:
+                self.say('Hello!')
 
 
 if __name__ == '__main__':
-    jarvis = VoiceAssistant()
+    friday = VoiceAssistant('friday', 'Hello, Boss!')
     while True:
-        jarvis.listen()
+        friday.listen()
