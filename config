@@ -8,10 +8,42 @@ speed=160       # words/minute
 # Functions
 [Say name]
 keyphrase=what is your name
-command=None
+command=
 response=My name is {name}
 
 [Say name2]
 keyphrase=what's your name
-command=notify-send "How dare you use contractions!"
+command=
 response=My name is {name}
+
+[Read Preferences]
+keyphrase=preferences
+command=
+response=My name is {name}. My language is {language}. I speak with a pitch of {pitch} and a speed of {speed}. My startup quote is {startupQuote}
+
+[Lock screen]
+keyphrase=lock
+command=xscreensaver-command --lock
+response=Locking, sir
+
+[Barn door protocol]
+keyphrase=barn door protocol
+command=xscreensaver-command --lock
+response=Yes sir
+
+[Quit VA]
+keyphrase=quit
+command=quitVA
+response=Shutting down...
+
+[Exit VA]
+keyphrase=exit
+command=quitVA
+response=Shutting down...
+
+# Look through https://marvelcinematicuniverse.fandom.com/wiki/Category:Protocols
+
+#[]
+#keyphrase=
+#command=
+#response=

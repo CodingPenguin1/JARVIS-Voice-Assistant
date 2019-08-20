@@ -3,17 +3,14 @@ from os import system
 from Command import Command
 from subprocess import call
 from os import system
+import os
 
 
 class VoiceAssistant:
     def __init__(self, configFilepath):
         self.configFilepath = configFilepath
         self.preferences, self.commands = self.loadConfig()
-
-        for key in self.preferences.keys():
-            print(key + ': ' + self.preferences[key])
-
-        self.say(self.preferences['startupQuote'])
+        self.ready = False
 
     def loadConfig(self):
         # Read config file into list
@@ -57,6 +54,10 @@ class VoiceAssistant:
         r = sr.Recognizer()
         mic = sr.Microphone()
 
+        if not self.ready:
+            self.say(self.preferences['startupQuote'])
+            self.ready = True
+
         with mic as source:
             print('\nlistening')
             r.adjust_for_ambient_noise(source)
@@ -87,9 +88,13 @@ class VoiceAssistant:
             for commandName in list(self.commands.keys()):
                 command = self.commands[commandName]
                 if command.keyphrase in instructions:
+                    # Say response
+                    self.say(command.response)
                     # Execute command
+                    if command.executable == 'quitVA':
+                        os._exit(0)
                     try:
-                        if command.executable != 'None':
+                        if len(command.executable) > 0 and command.executable.lower() != 'none':
                             print('Executing: ' + command.executable)
                             try:
                                 call(command.executable)
@@ -97,8 +102,6 @@ class VoiceAssistant:
                                 system(command.executable)
                     except:
                         print('Failed to run: ' + command.executable)
-                    # Say response
-                    self.say(command.response)
 
 
 if __name__ == '__main__':
