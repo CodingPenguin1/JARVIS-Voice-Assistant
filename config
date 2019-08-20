@@ -1,0 +1,17 @@
+# Voice Assistant Preferences
+name=Jarvis
+startupQuote=At your service, sir
+language=en-uk  # espeak --voices
+pitch=50        # 0-99 inclusive
+speed=160       # words/minute
+
+# Functions
+[Say name]
+keyphrase=what is your name
+command=None
+response=My name is {name}
+
+[Say name2]
+keyphrase=what's your name
+command=notify-send "How dare you use contractions!"
+response=My name is {name}
