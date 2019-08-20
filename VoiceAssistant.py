@@ -93,15 +93,18 @@ class VoiceAssistant:
                     # Execute command
                     if command.executable == 'quitVA':
                         os._exit(0)
-                    try:
-                        if len(command.executable) > 0 and command.executable.lower() != 'none':
-                            print('Executing: ' + command.executable)
-                            try:
-                                call(command.executable)
-                            except:
-                                system(command.executable)
-                    except:
-                        print('Failed to run: ' + command.executable)
+                    elif command.executable == 'reloadConfig':
+                        self.preferences, self.commands = self.loadConfig()
+                    else:
+                        try:
+                            if len(command.executable) > 0 and command.executable.lower() != 'none':
+                                print('Executing: ' + command.executable)
+                                try:
+                                    call(command.executable)
+                                except:
+                                    system(command.executable)
+                        except:
+                            print('Failed to run: ' + command.executable)
 
 
 if __name__ == '__main__':

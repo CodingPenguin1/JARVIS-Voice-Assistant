@@ -41,6 +41,11 @@ keyphrase=exit
 command=quitVA
 response=Shutting down...
 
+[Reload config]
+keyphrase=reload
+command=reloadConfig
+response=Yes, sir
+
 # Look through https://marvelcinematicuniverse.fandom.com/wiki/Category:Protocols
 
 #[]
