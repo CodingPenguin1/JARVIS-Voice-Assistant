@@ -15,3 +15,5 @@ the controller reads from a json file with a number of entries. Each entry has t
 Command line arguments will be taken from capture groups in the regex, and the clarification commands should have access to any previous capture groups
 
 Should also be able to read the output of the command it calls and base a response off that. If I ask "What's your IP" it should run `ip a | grep ... ` and respond with "My IP is $IP"
+
+Before sending a command to the back end, the front end removes the keyword

@@ -1,0 +1,46 @@
+{
+    "name": "jarvis",
+    "startupQuote": "At your service, sir",
+    "language": "en-uk",
+    "pitch": 50,
+    "speed": 160,
+
+    "commands" : {
+        "hello" : {
+            "exact": "^hello$",
+            "fuzzy": "^(hello|hey|hi|hell oh)$",
+            "weight": -20,
+
+            "command": "true",
+            "returnParse": "()",
+
+            "clarification": {
+                "say": "This should never happen",
+                "command": "hello",
+                "prompt": "hello"
+            },
+
+            "pre": "Hello, sir",
+            "post": null
+        },
+
+        "playSong" : {
+            "exact": "play (.*)$",
+            "fuzzy": "^$",
+            "weight": 1,
+
+            "command": "playSong.py '{args[0]}'",
+            "returnParse": "(\\d*)",
+
+            "clarification": {
+                "say": "I found {return[0]} songs that match {args[0]}. Can you please give a better term to search?",
+                "command": "playSong",
+                "prompt": "play {newText}"
+            },
+
+            "pre": "Searching for a song that matches {args}", 
+            "post": "I hope you enjoyed your listening experience, sir"
+            
+        }
+    }
+}
