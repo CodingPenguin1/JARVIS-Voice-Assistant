@@ -16,4 +16,4 @@ Command line arguments will be taken from capture groups in the regex, and the c
 
 Should also be able to read the output of the command it calls and base a response off that. If I ask "What's your IP" it should run `ip a | grep ... ` and respond with "My IP is $IP"
 
-Before sending a command to the back end, the front end removes the keyword
+Before sending a command to the back end, the front end removes the keyword and trims leading and trailing whitespace
