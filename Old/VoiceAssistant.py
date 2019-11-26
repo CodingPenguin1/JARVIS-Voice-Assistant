@@ -108,6 +108,6 @@ class VoiceAssistant:
 
 
 if __name__ == '__main__':
-    va = VoiceAssistant('/home/rjslater/Documents/Personal/JARVIS-Voice-Assistant/config')
+    va = VoiceAssistant('config')
     while True:
         va.listen()
