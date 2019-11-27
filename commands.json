@@ -13,6 +13,7 @@
 
             "command": "true",
             "arguments": [],
+            "detatch": true,
             "returnParse": "()",
 
             "clarification": {
@@ -25,6 +26,26 @@
             "post": null
         },
 
+        "terminal": {
+            "exact": "^open a terminal$",
+            "fuzzy": "terminal",
+            "weight": -5,
+
+            "command": "konsole",
+            "arguments": [],
+            "detatch": true,
+            "returnParse": "()",
+
+            "clarification": {
+                "say": "This should never happen",
+                "command": "terminal",
+                "prompt": "open a terminal"
+            },
+
+            "pre": "As you wish",
+            "post": null
+        },
+
         "playSong" : {
             "exact": "play (.*)$",
             "fuzzy": "^$",
@@ -34,6 +55,7 @@
             "arguments": [
                 "{args[0]}"
             ],
+            "detatch": false,
             "returnParse": "(\\d*)",
 
             "clarification": {
@@ -54,6 +76,7 @@
 
             "command": "true",
             "arguments": [],
+            "detatch": true,
             "returnParse": "()",
 
             "clarification": {
