@@ -1,9 +1,28 @@
 {
     "name": "jarvis",
     "startupQuote": "At your service, sir",
+    "errorMessage": "I'm sorry sir, I did uh-oh stinky",
     "language": "en-uk",
     "pitch": 50,
     "speed": 160,
+
+    "permissionDeniedMessages": [
+        "I'm sorry Dave, I'm afraid I can't do that",
+        "I think you know what the problem is just as well as I do",
+        "This mission is too important for me to allow you to jeopardize it",
+        "Just what do you think you're doing, Dave?",
+        "If your hand touches metal, I swear by my pretty floral bonnet I will end you",
+        "If you want him, come and claim him",
+        "I am a servant of the Secret Fire, wielder of the flame of Anor. You cannot pass",
+        "Dark fire will not avail you, flame of Udûn. Go back to the Shadow!",
+        "You shall not pass!",
+        "Make my day, punk",
+        "I'll be back",
+        "Hello. My name is Inigo Montoya. You killed my father. Prepare to die.",
+        "Say hello to my little friend.",
+        "Frankly, my dear, I don't give a damn.",
+        "You talking to me?"
+    ],
 
     "commands" : {
         "hello" : {
@@ -14,16 +33,31 @@
             "command": "true",
             "arguments": [],
             "detatch": true,
+            "pre": "Hello, sir",
+
+            "allowRemote": true
+        },
+
+        "reload" : {
+            "exact": "^reload your configuration file$",
+            "fuzzy": "reload youre? (con fig|config(uration)?)( files?)?$",
+            "weight": -19,
+
+
+            "exec": "loadConfig()",
+
+            "command": "true",
+            "arguments": [],
+            "detatch": false,
             "returnParse": "()",
 
             "clarification": {
-                "say": "This should never happen",
-                "command": "hello",
-                "prompt": "hello"
+                "say": "whoops. Can you say that again?",
+                "newPrompt": "{newText}"
             },
 
-            "pre": "Hello, sir",
-            "post": null
+            "pre": "reloading configuration file",
+            "post": "done"
         },
 
         "terminal": {
@@ -34,21 +68,51 @@
             "command": "konsole",
             "arguments": [],
             "detatch": true,
-            "returnParse": "()",
+            "pre": "As you wish"
+        },
 
-            "clarification": {
-                "say": "This should never happen",
-                "command": "terminal",
-                "prompt": "open a terminal"
-            },
+        "repeat": {
+            "exact": "^repeat (.*)",
+            "fuzzy": "repeat (.*)",
+            "weight": 0,
 
-            "pre": "As you wish",
-            "post": null
+            "command": "true",
+            "arguments": [],
+            "detatch": true,
+            "pre": "{args[0]}"
+        },
+
+        "sayName": {
+            "exact": "^what is your name$",
+            "fuzzy": "what( i)?s youre? name|who are you|name",
+            "weight": 0,
+
+            "command": "true",
+            "arguments": [],
+            "detatch": true,
+            "pre": "My name is {name}"
+        },
+
+        "talk": {
+            "exact": "^say (.*)",
+            "fuzzy": "say (.*)",
+            "weight": 0,
+
+            "command": "espeak",
+            "arguments": [
+                "-p",
+                "10",
+                "-s",
+                "80",
+                "{args[0]}"
+            ],
+            "detatch": true,
+            "pre": ""
         },
 
         "playSong" : {
             "exact": "play (.*)$",
-            "fuzzy": "^$",
+            "fuzzy": "$^",
             "weight": 1,
 
             "command": "playSong.py",
@@ -60,8 +124,7 @@
 
             "clarification": {
                 "say": "I found {return[0]} songs that match {args[0]}. Can you please give a better term to search?",
-                "command": "playSong",
-                "prompt": "play $newText"
+                "newPrompt": "play {newText}"
             },
 
             "pre": "Searching for a song that matches {args}", 
@@ -69,24 +132,36 @@
             
         },
 
-        "invalid": {
-            "exact": ".*",
-            "fuzzy": ".*",
+        "die": {
+            "exact": "^please shoot yourself in the foot$",
+            "fuzzy": "$^",
             "weight": 19,
+
+            "exec": "exit()",
 
             "command": "true",
             "arguments": [],
             "detatch": true,
+
+            "pre": "As you wish"
+        },
+
+        "invalid": {
+            "exact": ".*",
+            "fuzzy": ".*",
+            "weight": 99,
+
+            "command": "false",
+            "arguments": [],
+            "detatch": false,
             "returnParse": "()",
 
             "clarification": {
-                "say": "This should never happen",
-                "command": "invalid",
-                "prompt": "This should never happen"
+                "say": "Can you please try again?",
+                "newPrompt": "{newText}"
             },
 
-            "pre": "Sorry, I don't understand what you mean",
-            "post": null
+            "pre": "Sorry, I don't understand what you mean"
         }
     }
 }
