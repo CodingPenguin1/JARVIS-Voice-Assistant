@@ -8,7 +8,7 @@ import subprocess
 import traceback
 
 ALLOW_EXEC = True
-DEBUG = True
+DEBUG = False
 LOCALHOST = "127.0.0.1"
 MESSAGE_END = "\n"
 
@@ -96,9 +96,7 @@ def loadConfig():
     configVars = {}
 
     for k, v in info.items():
-        tv = type(v)
-        # TODO There's probably a better way to do this. Ask Ryan
-        if tv == type(1) or tv == type("dhglfglf") or tv == type(True):
+        if type(v) in [int, str, bool]:
             configVars[k] = str(v)
 
     print(configVars)
