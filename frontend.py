@@ -11,6 +11,7 @@ def sendCommand(sentence):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((HOST, PORT))
         s.sendall(sentence.encode())
+        s.settimeout(5)
         data = s.recv(1024)
     return data.decode('utf-8')
 
@@ -102,11 +103,12 @@ if __name__ == '__main__':
             if len(heardSentence) > 0:
                 if assistantName.lower() in heardSentence:
                     if 'stop' in heardSentence:
+                        sendCommand('please shoot yourself in the foot')
                         say('Goodbye, Sir', language, pitch, speed)
                         quit()
                     heardSentence = heardSentence.replace('sudo', 'PSEUDO')
                     print(heardSentence)
 
                     # Send command to backend and get response
-                    returnedData = sendCommand(heardSentence.replace(assistantName, '', 1).strip())
+                    returnedData = sendCommand(heardSentence.replace(assistantName, '').strip())
                     say(returnedData, language, pitch, speed)
