@@ -56,9 +56,9 @@ if __name__ == '__main__':
             #     heardSentence = r.recognize_google(audio).replace('sudo', 'PSEUDO')
             #     print('Using Google:')
             # except:
-            heardSentence = r.recognize_sphinx(audio, show_all=True).nbest().hypstr
-            # for data, i in zip(heardSentence.nbest(), range(10)):
-                # print(data.hypstr, data.score)
+            heardSentence = zip(r.recognize_sphinx(audio, show_all=True).nbest())[0].hypstr
+            for data, i in zip(heardSentence.nbest(), range(10)):
+                print(data.hypstr, data.score)
             print(type(heardSentence))
             heardSentence = heardSentence.replace('sudo', 'PSEUDO')
             print('Using Sphinx:')
