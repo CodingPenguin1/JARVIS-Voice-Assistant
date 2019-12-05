@@ -52,23 +52,30 @@ if __name__ == '__main__':
             print('Listening...')
             audio = r.listen(source)
             # Once input is heard, try google first, then sphinx (if no internet connection or somehow Google fails)
-            # try:
-            #     heardSentence = r.recognize_google(audio).replace('sudo', 'PSEUDO')
-            #     print('Using Google:')
-            # except:
-            heardSentence = r.recognize_sphinx(audio, show_all=True)
-            for data, i in zip(heardSentence.nbest(), range(10)):
-                heardSentence = data.hypstr
-                break
-            heardSentence = heardSentence.replace('sudo', 'PSEUDO')
-            print('Using Sphinx:')
-            print(heardSentence)
+            try:
+                try:
+                    heardSentence = r.recognize_google(audio).replace('sudo', 'PSEUDO')
+                    print('Using Google:')
+                except:
+                    heardSentence = r.recognize_sphinx(audio, show_all=True)
+                    for data, i in zip(heardSentence.nbest(), range(10)):
+                        heardSentence = data.hypstr
+                        break
+            except:
+                heardSentence = ''
 
-            # Send command to backend and get response
-            returnedData = sendCommand(heardSentence.replace(assistantName, '').strip())
-            print(returnedData)
+            # Process sentence
+            if len(heardSentence) > 0:
+                if assistantName in heardSentence:
+                    heardSentence = heardSentence.replace('sudo', 'PSEUDO')
+                    print('Using Sphinx:')
+                    print(heardSentence)
 
-            if 'stop' in heardSentence:
-                quit()
+                    # Send command to backend and get response
+                    returnedData = sendCommand(heardSentence.replace(assistantName, '').strip())
+                    print(returnedData)
+
+                    if 'stop' in heardSentence:
+                        quit()
 
 
