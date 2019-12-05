@@ -7,13 +7,10 @@ import json
 import argparse
 
 
-def sendCommand(sentence):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((HOST, PORT))
-        s.sendall(sentence.encode())
-        s.settimeout(5)
-        data = s.recv(1024)
-    return data.decode('utf-8')
+def sendCommand(sentence, s):
+    s.sendall(sentence.encode())
+    data = s.recv(1024).decode('utf-8')
+    return data
 
 
 def say(sentence, language, pitch, speed):
@@ -110,5 +107,42 @@ if __name__ == '__main__':
                     print(heardSentence)
 
                     # Send command to backend and get response
-                    returnedData = sendCommand(heardSentence.replace(assistantName, '').strip())
-                    say(returnedData, language, pitch, speed)
+                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                        s.connect((HOST, PORT))
+                        returnedData = sendCommand(heardSentence.replace(assistantName, '').strip(), s)
+                        say(returnedData, language, pitch, speed)
+                        while True:
+                            data = s.recv(1024).decode('utf-8')
+                            if len(returnedData) > 0:
+                                while True:
+                                    # Listen for input
+                                    print('Listening...')
+                                    try:
+                                        audio = r.listen(source, timeout=2, phrase_time_limit=10)
+                                    except:
+                                        # If longer than 5 seconds of silence, retry
+                                        continue
+
+                                    # Once input is heard, try google first, then sphinx (if no internet connection or somehow Google fails)
+                                    try:
+                                        try:
+                                            heardSentence = r.recognize_google(audio).lower()
+                                            print('Using Google:')
+                                        except:
+                                            heardSentence = r.recognize_sphinx(audio, show_all=True)
+                                            for data, i in zip(heardSentence.nbest(), range(10)):
+                                                heardSentence = data.hypstr.lower()
+                                                break
+                                            print('Using Sphinx:')
+                                    except:
+                                        heardSentence = ''
+                                    print(heardSentence)
+
+
+                                    heardSentence = str(heardSentence).lower()
+                                    print(heardSentence)
+
+                                    returnedData = sendCommand(heardSentence.replace(assistantName, '').strip(), s)
+                                    say(returnedData, language, pitch, speed)
+                            else:
+                                break
