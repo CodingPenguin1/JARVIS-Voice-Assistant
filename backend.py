@@ -11,6 +11,7 @@ ALLOW_EXEC = True
 DEBUG = False
 LOCALHOST = "127.0.0.1"
 MESSAGE_END = "\n"
+CONFIG_FILE = "commands.json"
 
 # #############################################################################
 # #####                         BEGIN BEST MATCH                          #####
@@ -82,13 +83,13 @@ def handlePrompt(prompt, connection, address):
 # #############################################################################
 # #####                            LOAD CONFIG                            #####
 # #############################################################################
-
+# hi
 
 
 def loadConfig():
     global info, commands, configVars
     print("Loading commands")
-    with open("commands.json", "r") as commandsFile:
+    with open(CONFIG_FILE, "r") as commandsFile:
         info = json.load(commandsFile)
 
     commands = info["commands"]
@@ -232,6 +233,8 @@ if __name__ == '__main__':
     sock.listen(1)
 
     print("{}! Listening on port {}".format(info["startupQuote"], port))
+
+    subprocess.Popen(["python", "frontend.py", "--ip", LOCALHOST, "--port", str(port), "--config", CONFIG_FILE])
 
     while True:
         try:
