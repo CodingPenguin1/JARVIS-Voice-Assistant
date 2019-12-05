@@ -66,6 +66,10 @@ if __name__ == '__main__':
     with mic as source:
         r.adjust_for_ambient_noise(source)
         r.pause_threshold = r.non_speaking_duration
+
+        # Say startup quote and begin running
+        say(config['startupQuote'], language, pitch, speed)
+
         while True:
             # Listen for input
             print('Listening...')
@@ -100,5 +104,5 @@ if __name__ == '__main__':
                     print(heardSentence)
 
                     # Send command to backend and get response
-                    returnedData = sendCommand(heardSentence.replace(assistantName, '').strip())
+                    returnedData = sendCommand(heardSentence.replace(assistantName, '', 1).strip())
                     say(returnedData, language, pitch, speed)
