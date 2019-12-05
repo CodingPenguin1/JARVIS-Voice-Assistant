@@ -8,7 +8,7 @@ import subprocess
 import traceback
 
 ALLOW_EXEC = True
-DEBUG = False
+DEBUG = True
 LOCALHOST = "127.0.0.1"
 MESSAGE_END = "\n"
 CONFIG_FILE = "commands.json"
