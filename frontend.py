@@ -15,12 +15,9 @@ def sendCommand(sentence):
     return data.decode('utf-8')
 
 
-def say(sentence):
-    print(sentence)
-    tts = gTTS(sentence, 'en-uk')
-    tts.save('.said.mp3')
-    os.system('mpg123 .said.mp3')
-    os.remove('.said.mp3')
+def say(sentence, language, pitch, speed):
+    print('Saying:', sentence)
+    os.system('espeak "{}" -v {} -p {} -s {}'.format(sentence, language, pitch, speed))
 
 
 def readConfig(configFilepath):
@@ -61,39 +58,47 @@ if __name__ == '__main__':
     config = readConfig(CONFIG)
     print(config, '\n\n')
     assistantName = config['name']
+    language = config['language']
+    pitch = config['pitch']
+    speed = config['speed']
 
     # Main Loop
     with mic as source:
         r.adjust_for_ambient_noise(source)
+        r.pause_threshold = r.non_speaking_duration
         while True:
             # Listen for input
             print('Listening...')
-            audio = r.listen(source)
+            try:
+                audio = r.listen(source, timeout=2, phrase_time_limit=10)
+            except:
+                # If longer than 5 seconds of silence, retry
+                continue
+
             # Once input is heard, try google first, then sphinx (if no internet connection or somehow Google fails)
             try:
                 try:
-                    heardSentence = r.recognize_google(audio).replace('sudo', 'PSEUDO')
+                    heardSentence = r.recognize_google(audio).lower()
                     print('Using Google:')
                 except:
                     heardSentence = r.recognize_sphinx(audio, show_all=True)
                     for data, i in zip(heardSentence.nbest(), range(10)):
-                        heardSentence = data.hypstr
+                        heardSentence = data.hypstr.lower()
                         break
+                    print('Using Sphinx:')
             except:
                 heardSentence = ''
+            print(heardSentence)
 
             # Process sentence
             if len(heardSentence) > 0:
-                if assistantName in heardSentence:
+                if assistantName.lower() in heardSentence:
+                    if 'stop' in heardSentence:
+                        say('Goodbye, Sir', language, pitch, speed)
+                        quit()
                     heardSentence = heardSentence.replace('sudo', 'PSEUDO')
-                    print('Using Sphinx:')
                     print(heardSentence)
 
                     # Send command to backend and get response
                     returnedData = sendCommand(heardSentence.replace(assistantName, '').strip())
-                    print(returnedData)
-
-                    if 'stop' in heardSentence:
-                        quit()
-
-
+                    say(returnedData, language, pitch, speed)

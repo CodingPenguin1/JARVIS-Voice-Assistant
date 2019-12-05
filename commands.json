@@ -2,9 +2,9 @@
     "name": "jarvis",
     "startupQuote": "At your service, sir",
     "errorMessage": "I'm sorry sir, I did uh-oh stinky",
-    "language": "en-uk",
+    "language": "en-gb",
     "pitch": 50,
-    "speed": 160,
+    "speed": 170,
 
     "permissionDeniedMessages": [
         "I'm sorry Dave, I'm afraid I can't do that",
@@ -70,10 +70,10 @@
             "detatch": true,
             "pre": "As you wish"
         },
-        
-        "repeat": {
-            "exact": "^repeat (.*)",
-            "fuzzy": "repeat (.*)",
+
+        "echo": {
+            "exact": "^say (.*)",
+            "fuzzy": "say (.*)",
             "weight": 0,
 
             "command": "true",
@@ -93,23 +93,6 @@
             "pre": "My name is {name}"
         },
 
-        "talk": {
-            "exact": "^say (.*)",
-            "fuzzy": "say (.*)",
-            "weight": 0,
-
-            "command": "espeak",
-            "arguments": [
-                "-p",
-                "10",
-                "-s",
-                "80",
-                "{args[0]}"
-            ],
-            "detatch": true,
-            "pre": ""
-        },
-
         "playSong" : {
             "exact": "play (.*)$",
             "fuzzy": "$^",
@@ -127,9 +110,9 @@
                 "newPrompt": "play {newText}"
             },
 
-            "pre": "Searching for a song that matches {args}", 
+            "pre": "Searching for a song that matches {args}",
             "post": "I hope you enjoyed your listening experience, sir"
-            
+
         },
 
         "die": {
