@@ -94,8 +94,8 @@
         },
 
         "playSong" : {
-            "exact": "play (.*)$",
-            "fuzzy": "$^",
+            "exact": "^play (.*)$",
+            "fuzzy": "play (.*)",
             "weight": 1,
 
             "command": "playSong.py",
@@ -117,7 +117,7 @@
 
         "die": {
             "exact": "^please shoot yourself in the foot$",
-            "fuzzy": "$^",
+            "fuzzy": "^not guilty not guilty not guilty uncle sam$",
             "weight": 19,
 
             "exec": "exit()",

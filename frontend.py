@@ -90,6 +90,10 @@ if __name__ == '__main__':
                 heardSentence = ''
             print(heardSentence)
 
+
+            heardSentence = str(heardSentence).lower()
+            print(heardSentence)
+
             # Process sentence
             if len(heardSentence) > 0:
                 if assistantName.lower() in heardSentence:
