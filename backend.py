@@ -234,7 +234,7 @@ if __name__ == '__main__':
 
     print("{}! Listening on port {}".format(info["startupQuote"], port))
 
-    subprocess.Popen(["python", "frontend.py", "--ip", LOCALHOST, "--port", port, "--config", CONFIG_FILE])
+    subprocess.Popen(["python", "frontend.py", "--ip", LOCALHOST, "--port", str(port), "--config", CONFIG_FILE])
 
     while True:
         try:
