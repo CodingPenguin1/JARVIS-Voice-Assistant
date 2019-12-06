@@ -77,7 +77,7 @@ if __name__ == '__main__':
 
     # Set up recognizer and input device
     r = sr.Recognizer()
-    mic = sr.Microphone(device_index=1)
+    mic = sr.Microphone(device_index=0)
     print(100*'\n')
     print('Detected microphones:\n{}\n\n'.format(sr.Microphone.list_microphone_names()))
 
@@ -111,13 +111,13 @@ if __name__ == '__main__':
             if assistantName.lower() in heardSentence:
                 heardSentence = heardSentence.replace(assistantName, '').strip()
                 if len(heardSentence) > 0:
-                    if 'stop' in heardSentence:
-                        stop(language, pitch, speed, s)
                     heardSentence = heardSentence.replace('sudo', 'PSEUDO')
 
                     # Send command to backend and get response
                     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                         s.connect((HOST, PORT))
+                        if 'stop' in heardSentence:
+                            stop(language, pitch, speed, s)
                         returnedData = sendCommand(heardSentence, s)
                         say(returnedData, language, pitch, speed)
                         

@@ -176,6 +176,7 @@ def runCommand(command, args, connection, address):
     # Check if the command should be detatched
     # Run the command detatched
     if command["detatch"]:
+        subprocessArr.append('&')
         if DEBUG: print("Running {} in the background".format(command["command"]))
         subprocess.Popen(subprocessArr)
 
