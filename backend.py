@@ -192,7 +192,7 @@ def runCommand(command, args, connection, address):
 
         # If we got a bad return code
         if results.returncode != 0:
-            connection.send(parseString(command["clarification"]["say"] + MESSAGE_END, args, returnData).encode("utf-8"))
+            connection.send(parseString(info["clarificationMessage"] + command["clarification"]["say"] + MESSAGE_END, args, returnData).encode("utf-8"))
 
             newText = connection.recv(1024).decode("utf-8").rstrip().lstrip()
             reee.sub("[^\w ]", "", newText)

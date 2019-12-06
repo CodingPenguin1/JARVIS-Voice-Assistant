@@ -23,6 +23,44 @@ def readConfig(configFilepath):
         info = json.load(commandsFile)
     return info
 
+def getAudio(mic, recognizer):
+    with mic as source:
+        recognizer.adjust_for_ambient_noise(source)
+        recognizer.pause_threshold = r.non_speaking_duration
+
+        # Listen for input
+        print('\n\nListening...')
+        try:
+            audio = recognizer.listen(source, timeout=2, phrase_time_limit=10)
+        except:
+            # If longer than 5 seconds of silence, retry
+            heardSentence = ''
+
+        # Once input is heard, try google first, then sphinx (if no internet connection or somehow Google fails)
+        try:
+            try:
+                print('Trying Google')
+                heardSentence = recognizer.recognize_google(audio).lower()
+                print('Using Google:')
+            except:
+                print('Trying Sphinx')
+                heardSentence = recognizer.recognize_sphinx(audio, show_all=True)
+                for data, i in zip(heardSentence.nbest(), range(10)):
+                    heardSentence = data.hypstr.lower()
+                    break
+                print('Using Sphinx:')
+        except:
+            heardSentence = ''
+        if len(heardSentence) > 0:
+            print(heardSentence)
+    return heardSentence
+
+
+def stop(language, pitch, speed, socket):
+    sendCommand('please shoot yourself in the foot', socket)
+    say('Goodbye, Sir', language, pitch, speed)
+    quit()
+
 
 if __name__ == '__main__':
     # Global vars
@@ -39,7 +77,7 @@ if __name__ == '__main__':
 
     # Set up recognizer and input device
     r = sr.Recognizer()
-    mic = sr.Microphone()
+    mic = sr.Microphone(device_index=1)
     print(100*'\n')
     print('Detected microphones:\n{}\n\n'.format(sr.Microphone.list_microphone_names()))
 
@@ -60,89 +98,43 @@ if __name__ == '__main__':
     pitch = config['pitch']
     speed = config['speed']
 
+    # Say startup quote and begin running
+    say(config['startupQuote'], language, pitch, speed)
+
     # Main Loop
-    with mic as source:
-        r.adjust_for_ambient_noise(source)
-        r.pause_threshold = r.non_speaking_duration
+    while True:
+        heardSentence = getAudio(mic, r)
+        heardSentence = str(heardSentence).lower()
 
-        # Say startup quote and begin running
-        say(config['startupQuote'], language, pitch, speed)
-
-        while True:
-            # Listen for input
-            print('Listening...')
-            try:
-                audio = r.listen(source, timeout=2, phrase_time_limit=10)
-            except:
-                # If longer than 5 seconds of silence, retry
-                continue
-
-            # Once input is heard, try google first, then sphinx (if no internet connection or somehow Google fails)
-            try:
-                try:
-                    heardSentence = r.recognize_google(audio).lower()
-                    print('Using Google:')
-                except:
-                    heardSentence = r.recognize_sphinx(audio, show_all=True)
-                    for data, i in zip(heardSentence.nbest(), range(10)):
-                        heardSentence = data.hypstr.lower()
-                        break
-                    print('Using Sphinx:')
-            except:
-                heardSentence = ''
-            print(heardSentence)
-
-
-            heardSentence = str(heardSentence).lower()
-            print(heardSentence)
-
-            # Process sentence
-            if len(heardSentence) > 0:
-                if assistantName.lower() in heardSentence:
+        # Process sentence
+        if len(heardSentence) > 0:
+            if assistantName.lower() in heardSentence:
+                heardSentence = heardSentence.replace(assistantName, '').strip()
+                if len(heardSentence) > 0:
                     if 'stop' in heardSentence:
-                        sendCommand('please shoot yourself in the foot')
-                        say('Goodbye, Sir', language, pitch, speed)
-                        quit()
+                        stop(language, pitch, speed, s)
                     heardSentence = heardSentence.replace('sudo', 'PSEUDO')
-                    print(heardSentence)
 
                     # Send command to backend and get response
                     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                         s.connect((HOST, PORT))
-                        returnedData = sendCommand(heardSentence.replace(assistantName, '').strip(), s)
+                        returnedData = sendCommand(heardSentence, s)
                         say(returnedData, language, pitch, speed)
+                        
                         while True:
                             data = s.recv(1024).decode('utf-8')
-                            if len(returnedData) > 0:
+                            if config["clarificationMessage"] in data:
+                                # Listen for input
+                                print("Getting calrification: '{}'".format(data))
+                                say(data.replace(config["clarificationMessage"], ''), language, pitch, speed)
                                 while True:
-                                    # Listen for input
-                                    print('Listening...')
-                                    try:
-                                        audio = r.listen(source, timeout=2, phrase_time_limit=10)
-                                    except:
-                                        # If longer than 5 seconds of silence, retry
-                                        continue
-
-                                    # Once input is heard, try google first, then sphinx (if no internet connection or somehow Google fails)
-                                    try:
-                                        try:
-                                            heardSentence = r.recognize_google(audio).lower()
-                                            print('Using Google:')
-                                        except:
-                                            heardSentence = r.recognize_sphinx(audio, show_all=True)
-                                            for data, i in zip(heardSentence.nbest(), range(10)):
-                                                heardSentence = data.hypstr.lower()
-                                                break
-                                            print('Using Sphinx:')
-                                    except:
-                                        heardSentence = ''
-                                    print(heardSentence)
-
-
-                                    heardSentence = str(heardSentence).lower()
-                                    print(heardSentence)
-
-                                    returnedData = sendCommand(heardSentence.replace(assistantName, '').strip(), s)
-                                    say(returnedData, language, pitch, speed)
+                                    heardSentence = getAudio(mic, r)
+                                    heardSentence = str(heardSentence).lower().strip()
+                                    if len(heardSentence) > 0:
+                                        if 'stop' in heardSentence:
+                                            stop(language, pitch, speed, s)
+                                        returnedData = sendCommand(heardSentence, s)
+                                        say(returnedData, language, pitch, speed)
+                                        break
                             else:
                                 break

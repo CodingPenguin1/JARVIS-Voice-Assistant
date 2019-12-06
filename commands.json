@@ -1,10 +1,11 @@
 {
-    "name": "jarvis",
+    "name": "friday",
     "startupQuote": "At your service, sir",
     "errorMessage": "I'm sorry sir, I did uh-oh stinky",
     "language": "en-gb",
     "pitch": 50,
     "speed": 170,
+    "clarificationMessage": "!!CLAR!!: ",
 
     "permissionDeniedMessages": [
         "I'm sorry Dave, I'm afraid I can't do that",
